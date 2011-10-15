@@ -1,6 +1,7 @@
 
 #pages {
   width: 560px;
+  height: 400px;
   margin: 30px auto;
   padding: 20px;
   background: #FFF;
@@ -11,14 +12,63 @@
   overflow: hidden;
 }
 
-#pages .list h1 {
+#pages_slider{
+  width: 1200px;
+  top: 20px;
+  left: 20px;
+  position: absolute;
+  display: inline-block;
+	 transition: left 0.5s;
+  -moz-transition: left 0.5s; /* Firefox 4 */
+  -webkit-transition: left 0.5s; /* Safari and Chrome */
+  -o-transition: left 0.5s; /* Opera */
+
+  transition-timing-function: ease-in;
+  -moz-transition-timing-function: ease-in; /* Firefox 4 */
+  -webkit-transition-timing-function: ease-in; /* Safari and Chrome */
+  -o-transition-timing-function: ease-in; /* Opera */
+}
+
+#pages_slider.show_edit{
+  transition: left 1s;
+  -moz-transition: left 1s; /* Firefox 4 */
+  -webkit-transition: left 1s; /* Safari and Chrome */
+  -o-transition: left 1s; /* Opera */
+  transition-timing-function: ease-in-out;
+  -moz-transition-timing-function: ease-in-out; /* Firefox 4 */
+  -webkit-transition-timing-function: ease-in-out; /* Safari and Chrome */
+  -o-transition-timing-function: ease-in-out; /* Opera */
+  left: -560px;
+}
+
+
+#pages_slider .transitional{
+  content: ' ';
+  display: inline-block;
+  width: 560px;
+  height: 395px;
+  margin-right: 20px;
+  vertical-align: top;
+}
+
+#pages h1 {
   margin-top: 0;
 }
 
 #pages .list li {
+  list-style: none;
   cursor: pointer;
+  vertical-align: top;
 }
 
-#pages > *:not(.active) {
-  display: none;
+#pages .list li .button {
+  display: inline-block;
+  margin: 0px 15px 0px 7px;
+  -moz-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  font-size: 30px;
+}
+
+#pages .list li:hover {
+  font-weight: bold;
 }

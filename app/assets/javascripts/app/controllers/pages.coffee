@@ -11,7 +11,7 @@ class PagesEdit extends Spine.Controller
       @change Page.find(params.id)
 
   render: =>
-    @html $.tmpl("app/views/pages/edit", @item)
+    @el.html $.tmpl("app/views/pages/edit", @item)
 
   change: (item) ->
     @item = item
@@ -23,37 +23,10 @@ class PagesEdit extends Spine.Controller
     @back()
    
   back: ->
-    @navigate '/pages', @item.id
-  
-class PagesItem extends Spine.Controller
-  events:
-    "click .back": "back"
-    "click .edit": "edit"
-    "click .destroy": "destroyItem"
-    
-  constructor: ->
-    super
-    @active (params) ->
-      @change Page.find(params.id)
-    
-  render: =>
-    @html $.tmpl("app/views/pages/show", @item)
-    
-  change: (item) ->
-    @item = item
-    @render()
-
-  destroyItem: ->
-    @item.destroy()
-    @back()
-
-  edit: ->
-    @navigate '/pages', @item.id, 'edit'
-    
-  back: ->
     @navigate '/pages'
     
 class PagesList extends Spine.Controller
+
   className: "list"
   
   elements: 
@@ -62,10 +35,12 @@ class PagesList extends Spine.Controller
   events:
     "click .item": "show"
     "click .create": "create"
+    "click span.button" : "destroy"
     
   constructor: ->
     super
-    @html $.tmpl("app/views/pages/list")
+    @el.html $.tmpl("app/views/pages/list")
+    @refreshElements()
     Page.bind("refresh change", @render)
     
   render: =>
@@ -73,34 +48,41 @@ class PagesList extends Spine.Controller
     @items.html $.tmpl("app/views/pages/item", items)
     
   show: (e) ->
-    item = $(e.target).item()
-    @navigate "/pages", item.id
+    if e
+      @item = $(e.target).item()
+      @navigate '/pages', @item.id, 'edit'
     
   create: (e) ->
-    item = Page.create(name: 'Dummy page')
+    item = Page.create(name: 'Dummy page',count: Page.last()?.count + 1 || 1)
     @navigate "/pages", item.id, "edit"
 
+  destroy: (e) ->
+   e.stopImmediatePropagation()
+   item = $(e.target).item()
+   item.destroy()
+   @render()
+
 class Pages extends Spine.Controller
+  elements:
+    "#list" : "list_view"
+    "#edit" : "edit_view"
+
   constructor: ->    
     super
-    @list = new PagesList
-    @edit = new PagesEdit
-    @item = new PagesItem
+    @list = new PagesList(el: @list_view)
+    @edit = new PagesEdit(el: @edit_view)
     
-    new Spine.Manager(@list, @edit, @item)
-    
-    @append(@list, @edit, @item)
+    @append(@list, @edit)
     
     @routes
-      "/pages": (params) -> 
-        @list.active(params)
-      "/pages/:id/edit": (params) ->
+      "/pages": (params) => 
+        @el.removeClass('show_edit')
+
+      "/pages/:id/edit": (params) =>
         @edit.active(params)
-      "/pages/:id": (params) ->
-        @item.active(params)
-        
-    @list.active()
-        
+        @el.addClass('show_edit')
+   
+    
     # Only setup routes once pages have loaded
     Page.bind 'refresh', -> 
       Spine.Route.setup()
