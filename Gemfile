@@ -14,6 +14,9 @@ gem 'spine-rails'
 
 gem 'thin'
 
+gem 'mongo_mapper'
+gem 'bson_ext'
+
 group :development do
   gem 'sqlite3'
 end
